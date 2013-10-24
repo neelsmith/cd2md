@@ -23,7 +23,7 @@ A span of markdown source text can be linked to a reference by marking it with c
 
 the string `twelve recto` is linked to the URN identified by reference `1`.
 
-### Embedding Content of URN References (Quoting Sources) ###
+### Embedding Content of URN References (quoting sources) ###
 
 Similar to the way conventional markdown identifies an embedded image by preceding a reference to its URL with an exclamation point, citedown uses a preceding exclamation point to indicate that a URN should be quoted rather than cited;  that is, its content should be embedded in the document, rather than linked to.  For example, this URN definition and quotation would embed the content of the first ten lines of the *Iliad* in a processed citedown document:
 
