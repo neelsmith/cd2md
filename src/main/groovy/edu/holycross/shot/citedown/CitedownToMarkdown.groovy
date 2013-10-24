@@ -13,9 +13,14 @@ import edu.harvard.chs.cite.CtsUrn
 import edu.harvard.chs.cite.CiteUrn
 
 
+/** A class for working with text in citedown format, an
+* extension of markdown that supports citation using CITE URNs.
+* CitedownToMarkdown uses Ryan Baumann's citedown processor to 
+* parse text in citedown forat.
+*/
 class CitedownToMarkdown {
 
-
+    /** Debugging level.*/
     int debug = 0
 
     /** Result from parsing citedown source, set in constructor. */
@@ -24,7 +29,6 @@ class CitedownToMarkdown {
     /** Map of reference labels to source values. */
     def refMap = [:]
 
-    // Configurable run-time settings:
 
     /** Base URL for CTS request. */
     String cts = "http://beta.hpcc.uh.edu/tomcat/hmtcite/texts?request=GetPassagePlus&"
@@ -37,9 +41,6 @@ class CitedownToMarkdown {
 
     /** List of collections configured with CITE Image Extension. */
     def imgCollections = ['urn:cite:hmt:vaimg', 'urn:cite:hmt:vbimg', 'urn:cite:hmt:u4img','urn:cite:hmt:e3img', 'urn:cite:hmt:e4img']
-
-
-    
 
 
     /** Constructor naming three base URLs */
@@ -122,7 +123,10 @@ class CitedownToMarkdown {
     }
 
 
-
+    /** Converts text in a source file to pure markdown.
+    * @param f File with citedown source.
+    * @returns A String of markdown.
+    */
     String toMarkdown(File f) {
         String citedownText = f.getText("UTF-8")
         PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)
@@ -133,6 +137,22 @@ class CitedownToMarkdown {
             throw new Exception("CitedownToMarkdown: unable to parse file ${f};  ${e}")
         }
     }
+
+
+    /** Converts a string of citedown source to pure markdown.
+    * @param src Citedown source.
+    * @returns A String of markdown.
+    */
+    String toMarkdown(String src) {
+        PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)
+        try {
+            this.pr = pdp.parser.parseToParsingResult(src.toCharArray())
+            this.toMarkdown()
+        } catch (Exception e) {
+            throw new Exception("CitedownToMarkdown: unable to parse string ${src};  ${e}")
+        }
+    }
+
 
     /** Converts content of parsed citedown stored in this.pr to pure markdown.
     * First constructs a map of reference labels to source URNs,

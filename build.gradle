@@ -1,0 +1,24 @@
+
+apply plugin: "base"
+apply plugin: "groovy"
+
+apply from: "versions.gradle"
+
+group = "edu.holycross.shot.citedown"
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
+    }
+}
+
+dependencies {
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion
+    compile  group: 'edu.harvard.chs', name : 'citedown' , version: citedownVersion
+    compile  group: 'edu.harvard.chs', name : 'cite' , version: citeVersion
+    testCompile group: 'junit', name: 'junit', version: junitVersion
+}
+
+
