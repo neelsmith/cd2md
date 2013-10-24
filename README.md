@@ -28,6 +28,7 @@ the string `twelve recto` is linked to the URN identified by reference `1`.
 Similar to the way conventional markdown identifies an embedded image by preceding a reference to its URL with an exclamation point, citedown uses a preceding exclamation point to indicate that a URN should be quoted rather than cited;  that is, its content should be embedded in the document, rather than linked to.  For example, this URN definition and quotation would embed the content of the first ten lines of the *Iliad* in a processed citedown document:
 
 > `The *Iliad* begins !{with these famous lines}[1].`
+>
 > `[1]: urn:cts:greekLit:tlg0012.tlg001:1.1-1.10`
 
 
