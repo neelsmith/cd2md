@@ -17,7 +17,7 @@ defines a URN identifying a page of the Venetus A manuscript as reference 1.
 
 ### Linking to URN References (citing sources)###
 
-A span of markdown source text can be linked to a reference by marking it with curly brackets (braces), followed by the reference identifier in square bracket.  For example, in the markdown source text
+A span of markdown source text can be linked to a reference by marking it with curly brackets (braces), followed by the reference identifier in square brackets.  For example, in the markdown source text
 
 > `In the Venetus A manuscript, the *Iliad* text begins on folio {twelve recto}[1].`
 
