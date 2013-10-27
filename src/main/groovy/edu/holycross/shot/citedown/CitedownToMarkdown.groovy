@@ -18,7 +18,7 @@ import edu.harvard.chs.cite.CiteUrn
 * CitedownToMarkdown uses Ryan Baumann's citedown processor to 
 * parse text in citedown forat.
 */
-class CitedownToMarkdown {
+class CitedownConverter {
 
     /** Debugging level.*/
     int debug = 0
@@ -44,21 +44,21 @@ class CitedownToMarkdown {
 
 
     /** Constructor naming three base URLs */
-    CitedownToMarkdown(String ctsBase, String collBase, String imgBase) {
+    CitedownConverter(String ctsBase, String collBase, String imgBase) {
         this.cts = ctsBase
         this.coll = collBase
         this.img = imgBase
     }
 
     /** Empty constructor */
-    CitedownToMarkdown() {
+    CitedownConverter() {
     }
 
     /** Constructor working with String input.
     * @param citedownText String with citedown content.
     * @throws Exception if unable to parse citedown.
     */
-    CitedownToMarkdown(String citedownText) 
+    CitedownConverter(String citedownText) 
     throws Exception {
         PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)
         try {
@@ -73,7 +73,7 @@ class CitedownToMarkdown {
     * @param citedownFile File with citedown source.
     * @throws Exception if unable to parse citedownFile.
     */
-    CitedownToMarkdown(File citedownFile) 
+    CitedownConverter(File citedownFile) 
     throws Exception {
         String citedownText = citedownFile.getText("UTF-8")
         PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)

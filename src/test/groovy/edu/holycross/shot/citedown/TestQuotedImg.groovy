@@ -19,7 +19,7 @@ Illusration of folio 12 recto, ![image in natural light][1]
 """
 
     @Test void testCitation() {
-        CitedownToMarkdown c2m = new CitedownToMarkdown()
+        CitedownConverter c2m = new CitedownConverter()
       //  assert  c2m.toMarkdown(src) == expectedMarkdown
         System.err.println   c2m.toMarkdown(src)
     }

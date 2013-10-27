@@ -21,7 +21,7 @@ class TestCitedText extends GroovyTestCase {
 """
 
     @Test void testCitation() {
-        CitedownToMarkdown c2m = new CitedownToMarkdown()
+        CitedownConverter c2m = new CitedownConverter()
         assert c2m.toMarkdown(cdsource) == expectedMarkdown
 
     }
