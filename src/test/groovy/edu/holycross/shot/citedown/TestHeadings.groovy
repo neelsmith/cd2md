@@ -16,12 +16,9 @@ Paragraph of text.
 
 """
 
-@Test void testCitation() {
+@Test void testHeadings() {
   CitedownConverter c2m = new CitedownConverter()
-  // assert  c2m.toMarkdown(src) == src
-  c2m.debug = 10
   assert c2m.toMarkdown(src) == src
-  
 }
 
 }

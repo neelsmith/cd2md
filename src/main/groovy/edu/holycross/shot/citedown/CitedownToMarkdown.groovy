@@ -401,6 +401,7 @@ class CitedownConverter {
 	case "NonindentSpace":
 	case "Newline":
 	case "NormalChar":
+	case '"**"':
 	case '"##"':
 	case "'#'":
 	case "'*'":
