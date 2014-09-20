@@ -31,13 +31,13 @@ class CitedownConverter {
 
 
     /** Base URL for CTS request. */
-    String cts = "http://beta.hpcc.uh.edu/tomcat/hmtcite/texts?request=GetPassagePlus&"
+    String cts = "http://www.homermultitext.org/hmt-digital/texts?request=GetPassagePlus&"
 
     /** Base URL for CITE Collection request. */
-    String coll = "http://beta.hpcc.uh.edu/tomcat/hmtcite/collections?request=GetObjectPlus&"
+    String coll = "http://www.homermultitext.org/hmt-digital/collections?request=GetObjectPlus&"
 
     /** Base URL for CITE Collection request. */
-    String img = "http://beta.hpcc.uh.edu/tomcat/hmtcite/images?request=GetImagePlus&"
+    String img = "http://www.homermultitext.org/hmt-digital/images?request=GetImagePlus&"
 
     /** List of collections configured with CITE Image Extension. */
     def imgCollections = ['urn:cite:hmt:vaimg', 'urn:cite:hmt:vbimg', 'urn:cite:hmt:u4img','urn:cite:hmt:e3img', 'urn:cite:hmt:e4img']
