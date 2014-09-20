@@ -37,7 +37,21 @@ Similar to the way conventional markdown identifies an embedded image by precedi
 > `[1]: urn:cts:greekLit:tlg0012.tlg001:1.1-1.10`
 
 
+## Using the code library##
 
+By default, `gradle assemble` builds a "fat jar" with all dependencies included, so if you have the single
+`cd2md` jar on your CLASSPATH, you can 
+construct a CitedownConverter and change default values for CITE services like this:
+
+    CitedownConverter c2m = new CitedownConverter()
+    c2m.cts = "http://www.homermultitext.org/hmt-digital/texts"
+
+The `toMarkdown` method takes a String of citedown text, and returns pure markdown, e.g.,
+
+
+    String md = c2m.toMarkdown(citedownSource)
+    
+   
 
 
 
