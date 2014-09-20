@@ -9,7 +9,7 @@ class TestLists extends GroovyTestCase {
 
   CitedownConverter c2m = new CitedownConverter()
 
-  @Test void testEmph() {
+  @Test void testUl() {
     String ul = """
 Unordered list.
 
@@ -20,8 +20,42 @@ Unordered list.
 and subsequent paragraph.
 
 """
-    System.err.println c2m.toMarkdown(ul)
     assert c2m.toMarkdown(ul) == ul
-  
   }
+
+
+
+  @Test void testOrdered() {
+    String ol = """
+Ordered list.
+
+1. item the first
+1. second thing
+1. thing 3
+
+and subsequent paragraph.
+
+"""
+    assert c2m.toMarkdown(ol) == ol
+  }
+
+
+
+
+  @Test void testInternalMarkup() {
+    String ulwEmph = """
+Unordered list.
+
+- item *the first*
+- second thing
+
+and subsequent paragraph.
+
+"""
+    assert c2m.toMarkdown(ulwEmph) == ulwEmph
+  }
+
+
+
+
 }

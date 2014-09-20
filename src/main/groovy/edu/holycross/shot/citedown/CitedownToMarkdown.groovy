@@ -150,7 +150,7 @@ class CitedownConverter {
 	if (debug > 0) {
 	  System.err.println "toMarkdown: parsed charArray of ${src}"
 	}
-      
+	
 	this.toMarkdown()
       } catch (Exception e) {
 	throw new Exception("CitedownToMarkdown: unable to parse string ${src};  ${e}")
@@ -163,17 +163,19 @@ class CitedownConverter {
     * then walks the parsed tree to convert content to markdown.
     * @returns A String of markdown.
     */
-    String toMarkdown() {
-        collectReff()
-	String nodesString = collectNodes()
-	if (debug > 0){
-	  System.err.println "Now collecting nodes: ${nodesString}"
-	}
-        return nodesString
+  String toMarkdown() {
+    if (debug > 0) {
+      System.err.println "\nCollecting reff...\n"
     }
+    collectReff()
+    String nodesString = collectNodes()
+    if (debug > 0){
+      System.err.println "Now collecting nodes: ${nodesString}"
+    }
+    return nodesString
+  }
 
-
-    /** Finds a pair of Label and RefSrc elements in the parse tree, and stores
+  /** Finds a pair of Label and RefSrc elements in the parse tree, and stores
     * them in refMap.  Recursively walks from node until it encounters both a 
     * Label and RefSrc element.
     * @param node Node to descend from in searching for Label and RefSrc elements.
@@ -231,16 +233,16 @@ class CitedownConverter {
     * String values.
     */
     void collectReff(Object node, Object inBuff) {
-        node.getChildren().each { ch ->
-            switch (ch.getLabel()) {
-                case "Reference":
-                    extractRef(ch,inBuff, "", "", false)
-                break
-                default : 
-                    break
-            }
-            collectReff(ch, inBuff)
-        }
+      node.getChildren().each { ch ->
+	switch (ch.getLabel()) {
+	case "Reference":
+	extractRef(ch,inBuff, "", "", false)
+	break
+	default : 
+	break
+	}
+	collectReff(ch, inBuff)
+      }
     }
 
 
@@ -255,32 +257,32 @@ class CitedownConverter {
     * with fully resolved URLs.
     */
     String reformatReference(Object node, Object buff, String key, String ref, String reply, boolean done) {
-        node.getChildren().each { ch ->
-            switch (ch.getLabel()) {
-                case "Label":
-                    key = buff.extract(ch.getStartIndex(), ch.getEndIndex())
-                if (ref.size() > 0) {
-                    reply = "${key}: ${urlForUrn(ref)}\n"
-                    done = true
-                }
-                break
+      node.getChildren().each { ch ->
+	switch (ch.getLabel()) {
+	case "Label":
+	key = buff.extract(ch.getStartIndex(), ch.getEndIndex())
+	if (ref.size() > 0) {
+	  reply = "${key}: ${urlForUrn(ref)}\n"
+	  done = true
+	}
+	break
 
-                case "RefSrc":
-                    ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
-                if (key.size() > 0) {
-                    reply = "${key}: ${urlForUrn(ref)}\n"
-                    done = true
-                }
-                break
+	case "RefSrc":
+	ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
+	if (key.size() > 0) {
+	  reply = "${key}: ${urlForUrn(ref)}\n"
+	  done = true
+	}
+	break
             
-                default : 
-                break
-            }
-            if (! done) {
-                reply = reformatReference(ch, buff, key, ref, reply, done)
-            }
-        }
-        return reply
+	default : 
+	break
+	}
+	if (! done) {
+	  reply = reformatReference(ch, buff, key, ref, reply, done)
+	}
+      }
+      return reply
     }
 
     /** Finds values for CiteLabel and CiteReferenceLink within a Link element.
@@ -293,32 +295,36 @@ class CitedownConverter {
     */
     ArrayList extractCiteRef(Object node, Object buff, String key, String ref, ArrayList reply, boolean done) {
         node.getChildren().each { ch ->
-            switch (ch.getLabel()) {
-                case "CiteLabel":
-                    key = buff.extract(ch.getStartIndex() + 1, ch.getEndIndex() - 1)
-                if (ref.size() > 0) {
-                    reply.add(key)
-                    reply.add(ref)
-                    if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
-                    done = true
-                }
-                break
+	  if (debug > 1) {
+	    System.err.println "extractCiteRef: from " + ch.getLabel()
+	  }
 
-                case "CiteReferenceLink":
-                    ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
-                if (key.size() > 0) {
-                    reply.add(key)
-                    reply.add(ref)
-                    if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
-                    done = true
-                }
-                break
+	  switch (ch.getLabel()) {
+	  case "CiteLabel":
+	  key = buff.extract(ch.getStartIndex() + 1, ch.getEndIndex() - 1)
+	  if (ref.size() > 0) {
+	    reply.add(key)
+	    reply.add(ref)
+	    if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
+	      done = true
+	    }
+	    break
+
+	    case "CiteReferenceLink":
+	    ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
+	    if (key.size() > 0) {
+	      reply.add(key)
+	      reply.add(ref)
+	      if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
+	      done = true
+	    }
+	    break
             
-                default : 
-                break
+	    default : 
+	    break
             }
             if (! done) {
-                reply = extractCiteRef(ch, buff, key, ref, reply, done)
+	      reply = extractCiteRef(ch, buff, key, ref, reply, done)
             }
         }
         return reply
@@ -394,19 +400,28 @@ class CitedownConverter {
 	case "ReferenceNode":
 	System.err.println "Reference NODE: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
 	break
+	
+	case "ListItem":
+	System.err.println "==>ListItem " +  inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	replyStr = collectNodes(ch, inBuff, replyStr)
+	break
 
-
-	case "ANY":
-	case "Bullet":
+	// Text content to keep:
 	case "Sp":
 	case "Spacechar":
 	case "NonindentSpace":
 	case "Newline":
 	case "NormalChar":
-	case '"**"':
+	// md headings:
 	case '"##"':
 	case "'#'":
+	// md emphasis
+	case '"**"':
 	case "'*'":
+	// md ordered and unordered lists:
+	case "ANY":
+	case "Bullet":
+	case "Enumerator":
 	replyStr += inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
 	break
 	
