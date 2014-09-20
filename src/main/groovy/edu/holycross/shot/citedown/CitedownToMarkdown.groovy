@@ -144,13 +144,17 @@ class CitedownConverter {
     * @returns A String of markdown.
     */
     String toMarkdown(String src) {
-        PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)
-        try {
-            this.pr = pdp.parser.parseToParsingResult(src.toCharArray())
-            this.toMarkdown()
-        } catch (Exception e) {
-            throw new Exception("CitedownToMarkdown: unable to parse string ${src};  ${e}")
-        }
+      PegDownProcessor pdp = new PegDownProcessor(Extensions.CITE)
+      try {
+	this.pr = pdp.parser.parseToParsingResult(src.toCharArray())
+	if (debug > 0) {
+	  System.err.println "toMarkdown: parsed charArray of ${src}"
+	}
+      
+	this.toMarkdown()
+      } catch (Exception e) {
+	throw new Exception("CitedownToMarkdown: unable to parse string ${src};  ${e}")
+      }
     }
 
 
@@ -161,7 +165,11 @@ class CitedownConverter {
     */
     String toMarkdown() {
         collectReff()
-        return collectNodes()
+	String nodesString = collectNodes()
+	if (debug > 0){
+	  System.err.println "Now collecting nodes: ${nodesString}"
+	}
+        return nodesString
     }
 
 
@@ -338,68 +346,77 @@ class CitedownConverter {
     * URL values.
     */
     String collectNodes(Object node, Object inBuff, String replyStr ) {
+      if (debug > 1) { 
+	System.err.println "collecting nodes from ${node}"
+      }
+      node.getChildren().each { ch ->
+	switch (ch.getLabel()) {
+	  
+	case "Link":
+	// convert CiteLabel and CiteReferenceLink to markdown:
+	ArrayList cr = extractCiteRef(ch, inBuff, "", "", [], false) 
+	replyStr += "[${cr[0]}]${cr[1]}"
+	break
 
-        node.getChildren().each { ch ->
-            switch (ch.getLabel()) {
+	case "CiteLabel":
+	System.err.println "\tGot a CITE label. " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
 
-                case "Link":
-                // convert CiteLabel and CiteReferenceLink to markdown:
-                ArrayList cr = extractCiteRef(ch, inBuff, "", "", [], false) 
-                replyStr += "[${cr[0]}]${cr[1]}"
-                break
+	case "CiteReferenceLink":
+	System.err.println "\tGot a CITE ref link. " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
 
-                case "CiteLabel":
-                    System.err.println "\tGot a CITE label. " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
-
-                case "CiteReferenceLink":
-                    System.err.println "\tGot a CITE ref link. " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
-
-                case "CiteRefLinkNode":
-                    System.err.println "\tGot a CITE ref link NODE " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-
-                break
+	case "CiteRefLinkNode":
+	System.err.println "\tGot a CITE ref link NODE " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
                 
-                case "ReferenceLink":
-                    System.err.println "Reference link: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
-                case "RefSrc":
-                    System.err.println "REF SRC " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
+	case "ReferenceLink":
+	System.err.println "Reference link: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
+	case "RefSrc":
+	System.err.println "REF SRC " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
 
-                case "Reference":
-                    if (debug > 0) { System.err.println "Convert reference part to URL: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex()) }
-                // Label and RefSrc
-                String refAsUrl = reformatReference(ch, inBuff, "", "", "", false)
-                if (debug > 0) { System.err.println "As URL = " + refAsUrl }
-                replyStr +=  refAsUrl
-                    //replyStr += inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
+	case "Reference":
+	if (debug > 0) { System.err.println "Convert reference part to URL: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex()) }
+	// Label and RefSrc
+	String refAsUrl = reformatReference(ch, inBuff, "", "", "", false)
+	if (debug > 0) { System.err.println "As URL = " + refAsUrl }
+	replyStr +=  refAsUrl
+	//replyStr += inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
             
-                /* should not get these, maybe*/
-                case "Label":
-                    System.err.println "REF LABEL : " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
+	/* should not get these, maybe*/
+	case "Label":
+	System.err.println "REF LABEL : " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
                 
-                case "ReferenceNode":
-                    System.err.println "Reference NODE: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
+	case "ReferenceNode":
+	System.err.println "Reference NODE: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
 
-                case "Sp":
-                    case "Spacechar":
-                    case "NonindentSpace":
-                    case "Newline":
-                    case "NormalChar":
-                    replyStr += inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-                break
 
-                default:
-                    replyStr = collectNodes(ch, inBuff, replyStr)
-                break
-            }
-        }
-        return replyStr
+	case "Sp":
+	case "Spacechar":
+	case "NonindentSpace":
+	case "Newline":
+	case "NormalChar":
+	case '"##"':
+	case "'#'":
+	case "'*'":
+	replyStr += inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break
+	
+	default:
+	//System.err.println "\tUnhandled type: " + ch.getLabel() 
+	//+ " with indices + " + ch.getStartIndex() + ":" + ch.getEndIndex() + ", or extracted " + inBuff.extract(ch.getStartIndex(),ch.getEndIndex())
+
+	//System.err.println "Unhandled type: \n\t" + ch.getLabel() + " with indices + " + ch.getStartIndex() + ":" + ch.getEndIndex() + ", or extracted " + inBuff.extract(ch.getStartIndex(),ch.getEndIndex())
+	replyStr = collectNodes(ch, inBuff, replyStr)
+	break
+	}
+      }
+      return replyStr
     }
 
 }
