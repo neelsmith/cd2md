@@ -17,7 +17,7 @@ Folio {twelve recto}[1].
     String expectedMarkdown = """
 Folio [twelve recto][1].
 
-[1]: http://beta.hpcc.uh.edu/tomcat/hmtcite/collections?request=GetObjectPlus&urn=urn:cite:hmt:msA.12r
+[1]: http://www.homermultitext.org/hmt-digital/collections?request=GetObjectPlus&urn=urn:cite:hmt:msA.12r
 """
 
     @Test void testCitation() {

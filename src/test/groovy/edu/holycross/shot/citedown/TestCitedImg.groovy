@@ -15,7 +15,7 @@ Illustration of folio 12 recto, {image in natural light}[1]
     String expectedMarkdown = """
 Illustration of folio 12 recto, [image in natural light][1]
 
-[1]: http://beta.hpcc.uh.edu/tomcat/hmtcite/images?request=GetImagePlus&urn=urn:cite:hmt:vaimg.VA012RN-0013
+[1]: http://www.homermultitext.org/hmt-digital/images?request=GetImagePlus&urn=urn:cite:hmt:vaimg.VA012RN-0013
 """
 
     @Test void testCitation() {
