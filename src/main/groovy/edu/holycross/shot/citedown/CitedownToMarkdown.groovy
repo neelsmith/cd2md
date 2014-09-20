@@ -347,7 +347,7 @@ class CitedownConverter {
     */
     String collectNodes(Object node, Object inBuff, String replyStr ) {
       if (debug > 1) { 
-	System.err.println "collecting nodes from ${node}"
+	System.err.println "collecting nodes from ${node.getLabel()} (${node})"
       }
       node.getChildren().each { ch ->
 	switch (ch.getLabel()) {
@@ -396,6 +396,8 @@ class CitedownConverter {
 	break
 
 
+	case "ANY":
+	case "Bullet":
 	case "Sp":
 	case "Spacechar":
 	case "NonindentSpace":
