@@ -51,7 +51,25 @@ The `toMarkdown` method takes a String of citedown text, and returns pure markdo
 
     String md = c2m.toMarkdown(citedownSource)
     
-   
+## State of implementation and known bugs ##
+
+Standard markdown currently implemented:
+
+- atx-style headers ("#" headers)
+- emphasis and strong emphasis using asterisks
+- unordered lists using hyphens
+- ordered lists
+ 
+Citedown extensions:
+
+- URNs in reference definitions are resolved to URLs
+- citedown links with curly brackets implemented for CTS texts, CITE Objects, and CITE Images
+- citedown quotes with "!" and curly brackets implemented for CITE Images
+
+
+Known bugs:
+
+- links within list items are not correctly formatted
 
 
 
