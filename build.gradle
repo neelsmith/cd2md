@@ -1,6 +1,7 @@
 
 apply plugin: "base"
 apply plugin: "groovy"
+apply plugin: "maven"
 
 apply from: "versions.gradle"
 
@@ -13,6 +14,13 @@ repositories {
         url "http://beta.hpcc.uh.edu/nexus/content/repositories/releases"
     }
 }
+/*
+project.ext {
+    groovyVersion = "2.0.6"
+    citedownVersion = "1.2.1.0.1.0"
+    junitVersion = "4.8.2"
+    citeVersion = "0.12.22"
+}*/
 
 dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: groovyVersion

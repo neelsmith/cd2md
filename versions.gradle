@@ -1,4 +1,4 @@
-ext {
+project.ext {
     groovyVersion = "2.0.6"
     citedownVersion = "1.2.1.0.1.0"
     junitVersion = "4.8.2"

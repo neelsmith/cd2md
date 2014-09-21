@@ -270,7 +270,7 @@ class CitedownConverter {
 	case "RefSrc":
 	ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
 	if (key.size() > 0) {
-	  reply = "${key}: ${urlForUrn(ref)}\n"
+	  reply = "${key}: ${urlForUrn(ref)}\n\n"
 	  done = true
 	}
 	break
@@ -294,40 +294,47 @@ class CitedownConverter {
     * @returns A list containing, in sequence, the key and ref values.
     */
     ArrayList extractCiteRef(Object node, Object buff, String key, String ref, ArrayList reply, boolean done) {
-        node.getChildren().each { ch ->
-	  if (debug > 1) {
-	    System.err.println "extractCiteRef: from " + ch.getLabel()
-	  }
+      node.getChildren().each { ch ->
+	if (debug > 1) {
+	  System.err.println "extractCiteRef: from " + ch.getLabel()
+	}
 
-	  switch (ch.getLabel()) {
-	  case "CiteLabel":
-	  key = buff.extract(ch.getStartIndex() + 1, ch.getEndIndex() - 1)
-	  if (ref.size() > 0) {
-	    reply.add(key)
-	    reply.add(ref)
-	    if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
-	      done = true
-	    }
-	    break
+	switch (ch.getLabel()) {
 
-	    case "CiteReferenceLink":
-	    ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
-	    if (key.size() > 0) {
-	      reply.add(key)
-	      reply.add(ref)
-	      if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
-	      done = true
-	    }
-	    break
+	  /*
+	case "'!'":
+	System.err.println "==>BANG " +  buff.extract(ch.getStartIndex(), ch.getEndIndex())
+	break	    
+	  */
+
+	case "CiteLabel":
+	key = buff.extract(ch.getStartIndex() + 1, ch.getEndIndex() - 1)
+	if (ref.size() > 0) {
+	  reply.add(key)
+	  reply.add(ref)
+	  if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
+	  done = true
+	}
+	break
+
+	case "CiteReferenceLink":
+	ref = buff.extract(ch.getStartIndex(), ch.getEndIndex())
+	if (key.size() > 0) {
+	  reply.add(key)
+	  reply.add(ref)
+	  if (debug > 0) { System.err.println "${key} mapped to ${ref}"}
+	  done = true
+	}
+	break
             
-	    default : 
-	    break
-            }
-            if (! done) {
-	      reply = extractCiteRef(ch, buff, key, ref, reply, done)
-            }
+	default : 
+	break
+	}
+	if (! done) {
+	  reply = extractCiteRef(ch, buff, key, ref, reply, done)
+	}
         }
-        return reply
+      return reply
     }
 
     /** Collects a pure markdown representation of all citedown
@@ -360,7 +367,12 @@ class CitedownConverter {
 	  
 	case "Link":
 	// convert CiteLabel and CiteReferenceLink to markdown:
+	// CHECK IF FIRST CHAR IS !
+	// Decide on how to act depending on CITE type
+	//
 	ArrayList cr = extractCiteRef(ch, inBuff, "", "", [], false) 
+	System.err.println "==>LINK NODE: " +  inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+
 	replyStr += "[${cr[0]}]${cr[1]}"
 	break
 
@@ -401,23 +413,23 @@ class CitedownConverter {
 	System.err.println "Reference NODE: " + inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
 	break
 	
-	case "ListItem":
-	System.err.println "==>ListItem " +  inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
-	replyStr = collectNodes(ch, inBuff, replyStr)
-	break
 
-	// Text content to keep:
+	///////////////////////////////////////////////////////////////
+	////// Token classes with content to keep:
+	// Terminal text content:
 	case "Sp":
 	case "Spacechar":
 	case "NonindentSpace":
 	case "Newline":
 	case "NormalChar":
+
 	// md headings:
 	case '"##"':
 	case "'#'":
 	// md emphasis
 	case '"**"':
 	case "'*'":
+
 	// md ordered and unordered lists:
 	case "ANY":
 	case "Bullet":
