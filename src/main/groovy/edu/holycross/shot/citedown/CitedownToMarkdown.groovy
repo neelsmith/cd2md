@@ -367,11 +367,15 @@ class CitedownConverter {
 	  
 	case "Link":
 	// convert CiteLabel and CiteReferenceLink to markdown:
-	// CHECK IF FIRST CHAR IS !
-	// Decide on how to act depending on CITE type
-	//
+	// check if first char
+	if (inBuff.charAt(ch.getStartIndex()) == '!') {
+	  // simplistic:
+	  // Decide on how to act depending on CITE type
+	  // If image, request is GetBinaryImage.
+	  replyStr += "!"
+	}
 	ArrayList cr = extractCiteRef(ch, inBuff, "", "", [], false) 
-	System.err.println "==>LINK NODE: " +  inBuff.extract(ch.getStartIndex(), ch.getEndIndex())
+	if (debug > 1) { System.err.println "==>LINK NODE: " +  inBuff.extract(ch.getStartIndex(), ch.getEndIndex()) }
 
 	replyStr += "[${cr[0]}]${cr[1]}"
 	break
